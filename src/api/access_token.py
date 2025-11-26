@@ -1,0 +1,47 @@
+import requests
+
+from alibabacloud_dingtalk.oauth2_1_0.client import Client as dingtalkoauth2_1_0Client
+from alibabacloud_tea_openapi import models as open_api_models
+from alibabacloud_dingtalk.oauth2_1_0 import models as dingtalkoauth_2__1__0_models
+from alibabacloud_tea_util.client import Client as UtilClient
+
+
+# print('这行文字应该显示！')
+
+
+def access_token():
+    print('这行文字应该显示！!')
+    client_id = "dinge34tdtfmznf5bkvz"
+    client_secret = "4IuxO_Cr9RqJ51bhy87nBZQ7zoNizB-TvqrKOucL_PnNNM5K6qVd6bWdsvsTdF39"
+    return  access_token_with_client_id(client_id, client_secret)
+
+    # return ""
+def access_token_with_client_id(client_id: str, client_secret: str) -> str:
+
+    client = create_client()
+    get_access_token_request = dingtalkoauth_2__1__0_models.GetAccessTokenRequest(
+        app_key=client_id,
+        app_secret=client_secret
+    )
+    try:
+        access_token_response = client.get_access_token(get_access_token_request)
+        return access_token_response.body.access_token
+    except Exception as err:
+        if not UtilClient.empty(err.code) and not UtilClient.empty(err.message):
+            # err 中含有 code 和 message 属性，可帮助开发定位问题
+            pass
+
+
+
+# @staticmethod
+def create_client() -> dingtalkoauth2_1_0Client:
+    """
+    使用 Token 初始化账号Client
+    @return: Client
+    @throws Exception
+    """
+    config = open_api_models.Config()
+    config.protocol = 'https'
+    config.region_id = 'central'
+    return dingtalkoauth2_1_0Client(config)
+
