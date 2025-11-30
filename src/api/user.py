@@ -11,7 +11,7 @@ def list_sample_by_dept_id(access_token, dept_id):
     data = {
         "dept_id": dept_id,
         "cursor": 0,
-        "size": 100,
+        "size": 500,
         "order_field": "modify_desc",
         # "contain_access_limit": True,
         "language": "zh_CN"
