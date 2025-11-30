@@ -106,7 +106,12 @@ class ExcelReader:
         user_id = user_id_name[1]
         user_name = user_id_name[0]
 
-        user_info = get_by_user_id(self.access_token, user_id)
+
+        user_info = None
+        try:
+            user_info = get_by_user_id(self.access_token, user_id)
+        except Exception as e:
+            return e.args
 
         if user_info["name"].split('-')[0] != user_name:
             return "姓名不匹配，未发送"

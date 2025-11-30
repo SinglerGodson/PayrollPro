@@ -1,6 +1,7 @@
+import json
+
 import requests
-
-
+from numpy.f2py.auxfuncs import throw_error
 
 
 def list_sample_by_dept_id(access_token, dept_id):
@@ -42,7 +43,10 @@ def get_by_user_id(access_token, user_id):
             print(f"Error: Received status code {resp.status_code}, errmsg: {resp.text}")
             return None
         # print(resp)
-        return resp.json()['result']
+        resp_json = resp.json()
+        if resp_json['errcode'] != 0:
+            raise Exception(resp_json['errmsg'])
+        return resp_json['result']
     except Exception as e:
-        print(e)
+        raise Exception("查询用户信息异常。" + str(e))
 
