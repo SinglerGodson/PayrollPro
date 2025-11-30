@@ -1,9 +1,4 @@
-from openpyxl.reader.excel import load_workbook
-
 from src.api.access_token import access_token
-from src.api.dept import list_all_sub
-from src.api.user import list_sample_by_dept_id
-from src.api.msg_sender import send_msg
 from src.input.excel_reader import ExcelReader
 
 # test_simple.py
@@ -11,7 +6,7 @@ from src.input.excel_reader import ExcelReader
 
 # dept_id = 981231687 # 根组织机构id
 agent_id = "4095306262"
-# access_token = access_token()
+access_token = access_token()
 #
 # subList = list_all_sub(access_token, dept_id)
 #
@@ -24,10 +19,11 @@ agent_id = "4095306262"
 #     print(user)
 #
 #
+user_input_path = input()
 # user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总—学校定稿_dev.xlsx'
-user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总_---明博.xlsx'
+# user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总_---明博.xlsx'
 
-excel_reader = ExcelReader(user_input_path)
+excel_reader = ExcelReader(access_token, agent_id, user_input_path)
 excel_reader.read_write()
 # xls = pd.read_excel(user_input_path, sheet_name=None)
 

@@ -20,5 +20,6 @@ def send_msg(access_token, agent_id, user_id, message):
     }
 
     resp = requests.post(url, headers=headers, data=json.dumps(data), params=params)
-    print(resp)
+    return resp
+    # print(resp)
 

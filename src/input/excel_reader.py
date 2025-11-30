@@ -3,6 +3,9 @@ import json
 import pandas
 from openpyxl.reader.excel import load_workbook
 
+from src.api.msg_sender import send_msg
+from src.api.user import get_by_user_id
+
 user_id_col = 38
 config = {
         "教职工": {
@@ -10,25 +13,27 @@ config = {
             "index_col": 1, # 序号列
             "skip_cols": lambda i: i in (1, 3, 4, 38) or i > 28
         },
-        "管理人员": {
-            "header_row": 5,
-            "index_col": 0, # 序号列
-            "skip_cols": lambda i: i == 0 or i > 22
-        },
-        "工勤人员（校医、教官等）": {
-            "header_row": 3,
-            "index_col": 0, # 序号列
-            "skip_cols": lambda i:i == 0 or i > 21
-        },
-        "校长": {
-            "header_row": 5,
-            "index_col": 0, # 序号列
-            "skip_cols": lambda i: i == 0 or i > 19
-        },
+        # "管理人员": {
+        #     "header_row": 5,
+        #     "index_col": 0, # 序号列
+        #     "skip_cols": lambda i: i == 0 or i > 22
+        # },
+        # "工勤人员（校医、教官等）": {
+        #     "header_row": 3,
+        #     "index_col": 0, # 序号列
+        #     "skip_cols": lambda i:i == 0 or i > 21
+        # },
+        # "校长": {
+        #     "header_row": 5,
+        #     "index_col": 0, # 序号列
+        #     "skip_cols": lambda i: i == 0 or i > 19
+        # },
     }
 class ExcelReader:
 
-    def __init__(self, user_input_path):
+    def __init__(self, access_token, agent_id, user_input_path):
+        self.agent_id = agent_id
+        self.access_token = access_token
         self.user_input_path = user_input_path
 
     def read_write(self):
@@ -41,22 +46,28 @@ class ExcelReader:
             conf = config[sheet_name]
 
             skip_cols = conf["skip_cols"]
-            index_row = conf["index_col"]
             header_row = conf["header_row"]
 
-            msg_col = user_id_col + 1
-            send_tag_col = user_id_col + 2
             h1  = sheet[header_row]
             h2 = sheet[header_row + 1]
-            for row in sheet.iter_rows(min_row=header_row + 2, max_col=send_tag_col):
-                if not str(row[index_row].value).isdigit():
+            msg_col = user_id_col + 1
+            send_tag_col = user_id_col + 2
+            for row in sheet.iter_rows(min_row=header_row + 2, max_col=send_tag_col + 1):
+                if row[user_id_col].value is None:
                     break
 
-                if len(row) > send_tag_col and row[send_tag_col] == "已发送":
+                if row[send_tag_col] == "已发送":
                     continue
 
-                if row[msg_col].value is None:
-                    sheet[f'AN{row[0].row}'] = self.msg_concat(h1, h2, row, skip_cols)
+                row_num = row[0].row
+                send_msg = row[msg_col].value
+                if send_msg is None:
+                    sheet[f'AN{row_num}'] = self.msg_concat(h1, h2, row, skip_cols)
+                elif not row[send_tag_col].value == "已发送":
+                    user_id = str(row[user_id_col].value)
+                    if user_id is not None and not user_id.strip() == "":
+                        result = self.send_msg(user_id, send_msg)
+                        sheet[f'AO{row_num}'] = result
 
         book.save(self.user_input_path)
 
@@ -83,6 +94,24 @@ class ExcelReader:
                 if h_2 == "小计":
                     h_2 = h_1 + h_2
 
+                h_2 = str(h_2).replace("\n", "")
                 data[h_2] = value
-        return json.dumps(data, ensure_ascii=False).replace('"', "").replace('\n', "")
 
+        return json.dumps(data, ensure_ascii=False).replace('"', "").replace("{", "").replace("}", "")
+
+    def send_msg(self, user_id, msg):
+        print(f"send to {user_id}: {msg}")
+
+        user_id_name = user_id.split('@')
+        user_id = user_id_name[1]
+        user_name = user_id_name[0]
+
+        user_info = get_by_user_id(self.access_token, user_id)
+
+        if user_info["name"].split('-')[0] != user_name:
+            return "姓名不匹配，未发送"
+
+        resp = send_msg(self.access_token, self.agent_id, user_id, msg)
+        if resp.status_code != 200:
+            return f"发送异常。{resp.text}"
+        return "已发送"
