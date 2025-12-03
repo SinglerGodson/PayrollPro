@@ -10,7 +10,7 @@ from alibabacloud_tea_util.client import Client as UtilClient
 
 
 def access_token():
-    print('这行文字应该显示！!')
+    # print('这行文字应该显示！!')
     client_id = "dinge34tdtfmznf5bkvz"
     client_secret = "4IuxO_Cr9RqJ51bhy87nBZQ7zoNizB-TvqrKOucL_PnNNM5K6qVd6bWdsvsTdF39"
     return  access_token_with_client_id(client_id, client_secret)

@@ -19,8 +19,9 @@ access_token = access_token()
 #     print(user)
 #
 #
+print("请输入教职工工资表的完整路径：")
 # user_input_path = input()
-user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总—学校定稿_dev.xlsx'
+user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总—学校定稿.xlsx'
 # user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总_---明博.xlsx'
 
 excel_reader = ExcelReader(access_token, agent_id, user_input_path)

@@ -19,7 +19,6 @@ def send_msg(access_token, agent_id, user_id, message):
         }
     }
 
-    resp = requests.post(url, headers=headers, data=json.dumps(data), params=params)
-    return resp
-    # print(resp)
+    print(f"发送消息给用户: {user_id}，内容: {message }")
+    return requests.post(url, headers=headers, data=json.dumps(data), params=params)
 

@@ -13,21 +13,21 @@ config = {
             "index_col": 1, # 序号列
             "skip_cols": lambda i: i in (1, 3, 4, 38) or i > 28
         },
-        # "管理人员": {
-        #     "header_row": 5,
-        #     "index_col": 0, # 序号列
-        #     "skip_cols": lambda i: i == 0 or i > 22
-        # },
-        # "工勤人员（校医、教官等）": {
-        #     "header_row": 3,
-        #     "index_col": 0, # 序号列
-        #     "skip_cols": lambda i:i == 0 or i > 21
-        # },
-        # "校长": {
-        #     "header_row": 5,
-        #     "index_col": 0, # 序号列
-        #     "skip_cols": lambda i: i == 0 or i > 19
-        # },
+        "管理人员": {
+            "header_row": 5,
+            "index_col": 0, # 序号列
+            "skip_cols": lambda i: i == 0 or i > 22
+        },
+        "工勤人员（校医、教官等）": {
+            "header_row": 3,
+            "index_col": 0, # 序号列
+            "skip_cols": lambda i:i == 0 or i > 20
+        },
+        "校长": {
+            "header_row": 5,
+            "index_col": 0, # 序号列
+            "skip_cols": lambda i: i == 0 or i > 19
+        },
     }
 class ExcelReader:
 
@@ -67,7 +67,10 @@ class ExcelReader:
                     user_id = str(row[user_id_col].value)
                     if user_id is not None and not user_id.strip() == "":
                         result = self.send_msg(user_id, send_msg)
-                        sheet[f'AO{row_num}'] = result
+                        try:
+                            sheet[f'AO{row_num}'] = result
+                        except Exception as e:
+                            sheet[f'AO{row_num}'] = result
 
         book.save(self.user_input_path)
 
@@ -100,7 +103,7 @@ class ExcelReader:
         return json.dumps(data, ensure_ascii=False).replace('"', "").replace("{", "").replace("}", "")
 
     def send_msg(self, user_id, msg):
-        print(f"send to {user_id}: {msg}")
+        # print(f"send to {user_id}: {msg}")
 
         user_id_name = user_id.split('@')
         user_id = user_id_name[1]
@@ -111,7 +114,7 @@ class ExcelReader:
         try:
             user_info = get_by_user_id(self.access_token, user_id)
         except Exception as e:
-            return e.args
+            return str(e)
 
         if user_info["name"].split('-')[0] != user_name:
             return "姓名不匹配，未发送"

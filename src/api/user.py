@@ -39,14 +39,15 @@ def get_by_user_id(access_token, user_id):
 
     try:
         resp = requests.post(url, data=data, params=params)
-        if resp.status_code != 200:
-            print(f"Error: Received status code {resp.status_code}, errmsg: {resp.text}")
-            return None
-        # print(resp)
-        resp_json = resp.json()
-        if resp_json['errcode'] != 0:
-            raise Exception(resp_json['errmsg'])
-        return resp_json['result']
     except Exception as e:
         raise Exception("查询用户信息异常。" + str(e))
+
+    if resp.status_code != 200:
+        print(f"Error: Received status code {resp.status_code}, errmsg: {resp.text}")
+        return resp
+    # print(resp)
+    resp_json = resp.json()
+    if resp_json['errcode'] != 0:
+        raise Exception(resp_json['errmsg'])
+    return resp_json['result']
 
