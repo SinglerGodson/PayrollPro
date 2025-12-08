@@ -61,16 +61,24 @@ class ExcelReader:
 
                 row_num = row[0].row
                 send_msg = row[msg_col].value
+                user_id_name = str(row[user_id_col].value).split('@')
+                user_id = user_id_name[1]
+                user_name = user_id_name[0]
                 if send_msg is None:
+                    try:
+                        user_info = get_by_user_id(self.access_token, user_id)
+                        if user_info["name"].split('-')[0] != user_name:
+                            sheet[f'AO{row_num}'] = f"姓名不匹配。{user_name}"
+                            # return "姓名不匹配，未发送"
+                    except Exception as e:
+                        sheet[f'AO{row_num}'] = str(e)
+
                     sheet[f'AN{row_num}'] = self.msg_concat(h1, h2, row, skip_cols)
-                elif not row[send_tag_col].value == "已发送":
-                    user_id = str(row[user_id_col].value)
+
+                elif row[send_tag_col].value is None:
+                    # user_id = str(row[user_id_col].value)
                     if user_id is not None and not user_id.strip() == "":
-                        result = self.send_msg(user_id, send_msg)
-                        try:
-                            sheet[f'AO{row_num}'] = result
-                        except Exception as e:
-                            sheet[f'AO{row_num}'] = result
+                        sheet[f'AO{row_num}'] = self.send_msg(user_id, send_msg)
 
         book.save(self.user_input_path)
 
@@ -103,22 +111,6 @@ class ExcelReader:
         return json.dumps(data, ensure_ascii=False).replace('"', "").replace("{", "").replace("}", "")
 
     def send_msg(self, user_id, msg):
-        # print(f"send to {user_id}: {msg}")
-
-        user_id_name = user_id.split('@')
-        user_id = user_id_name[1]
-        user_name = user_id_name[0]
-
-
-        user_info = None
-        try:
-            user_info = get_by_user_id(self.access_token, user_id)
-        except Exception as e:
-            return str(e)
-
-        if user_info["name"].split('-')[0] != user_name:
-            return "姓名不匹配，未发送"
-
         resp = send_msg(self.access_token, self.agent_id, user_id, msg)
         if resp.status_code != 200:
             return f"发送异常。{resp.text}"

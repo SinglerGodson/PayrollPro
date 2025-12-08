@@ -25,7 +25,10 @@ user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职�
 # user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总_---明博.xlsx'
 
 excel_reader = ExcelReader(access_token, agent_id, user_input_path)
-excel_reader.read_write()
+try:
+  excel_reader.read_write()
+except Exception as e:
+    print(str(e))
 # xls = pd.read_excel(user_input_path, sheet_name=None)
 
 # user_id = "020116402938781404" # 马恩方
