@@ -53,15 +53,16 @@ class ExcelReader:
             msg_col = user_id_col + 1
             send_tag_col = user_id_col + 2
             for row in sheet.iter_rows(min_row=header_row + 2, max_col=send_tag_col + 1):
-                if row[user_id_col].value is None:
-                    break
-
                 if row[send_tag_col] == "已发送":
+                    continue
+
+                user_id_name = row[user_id_col].value
+                if user_id_name is None:
                     continue
 
                 row_num = row[0].row
                 send_msg = row[msg_col].value
-                user_id_name = str(row[user_id_col].value).split('@')
+                user_id_name = str(user_id_name).split('@')
                 user_id = user_id_name[1]
                 user_name = user_id_name[0]
                 if send_msg is None:
