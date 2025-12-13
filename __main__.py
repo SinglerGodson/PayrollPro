@@ -20,7 +20,7 @@ access_token = access_token()
 #
 #
 print("请输入教职工工资表的完整路径：")
-user_input_path = input()
+user_input_path = input().replace("\"", "")
 # user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总—学校定稿.xlsx'
 # user_input_path = '/Users/mac/Documents/学校行政/钉钉/薪酬发放/教职工工资表-工资汇总_---明博.xlsx'
 
