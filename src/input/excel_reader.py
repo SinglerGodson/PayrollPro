@@ -96,7 +96,6 @@ class ExcelReader:
 
                     # user_id = str(row[user_id_col].value)
                     if user_id is not None and not user_id.strip() == "":
-                        print(f'发送工资明细：{send_msg}')
                         sheet[f'AO{row_num}'] = self.send_msg(user_id, send_msg)
 
         print(f'保存文档：{self.user_input_path}')
