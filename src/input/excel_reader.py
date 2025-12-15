@@ -56,10 +56,10 @@ class ExcelReader:
             h2 = sheet[header_row + 1]
             msg_col = user_id_col + 1
             send_tag_col = user_id_col + 2
-            print(f'开始处理数据行')
             for row in sheet.iter_rows(min_row=header_row + 2, max_col=send_tag_col + 1):
 
                 if '合计' in str(row[0].value) or '审核' in str(row[0].value):
+                    print(f'处理{sheet_name}')
                     break
 
                 row_num = row[0].row
@@ -93,8 +93,6 @@ class ExcelReader:
                     sheet[f'AN{row_num}'] = msg_concat
 
                 elif row[send_tag_col].value is None:
-
-                    # user_id = str(row[user_id_col].value)
                     if user_id is not None and not user_id.strip() == "":
                         sheet[f'AO{row_num}'] = self.send_msg(user_id, send_msg)
 
