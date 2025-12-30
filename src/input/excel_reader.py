@@ -135,7 +135,7 @@ class ExcelReader:
         return json.dumps(data, ensure_ascii=False).replace('"', "").replace("{", "").replace("}", "")
 
     def send_msg(self, user_id, msg):
-        # resp = send_msg(self.access_token, self.agent_id, user_id, msg)
-        # if resp.status_code != 200:
-        #     return f"发送异常。{resp.text}"
+        resp = send_msg(self.access_token, self.agent_id, user_id, msg)
+        if resp.status_code != 200:
+            return f"发送异常。{resp.text}"
         return "已发送"
