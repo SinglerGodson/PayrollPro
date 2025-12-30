@@ -28,6 +28,11 @@ config = {
             "name_col": 1, # 姓名列
             "skip_cols": lambda i: i == 0 or i > 19
         },
+        "教职工_高三期绩效": {
+            "header_row": 4,
+            "name_col": 2, # 姓名列
+            "skip_cols": lambda i: i == 1 or i > 9
+        },
     }
 class ExcelReader:
 
@@ -110,6 +115,8 @@ class ExcelReader:
                 continue
 
             h1 = header1[i].value
+            if h1 is None:
+                h1 = ""
             if not pandas.isna(h1) and h1 != h_1:
                 h_1 = h1
 
@@ -128,7 +135,7 @@ class ExcelReader:
         return json.dumps(data, ensure_ascii=False).replace('"', "").replace("{", "").replace("}", "")
 
     def send_msg(self, user_id, msg):
-        resp = send_msg(self.access_token, self.agent_id, user_id, msg)
-        if resp.status_code != 200:
-            return f"发送异常。{resp.text}"
+        # resp = send_msg(self.access_token, self.agent_id, user_id, msg)
+        # if resp.status_code != 200:
+        #     return f"发送异常。{resp.text}"
         return "已发送"
